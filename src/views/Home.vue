@@ -17,7 +17,7 @@
           <strong>Contract balance:</strong><br>
           {{contract_balance}} Aettos
         </p>
-        <div v-if="arbiter">
+        <div>
           <button class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded" @click="pay_back">
             Pay back
           </button>
@@ -51,41 +51,41 @@
         arbiter : address,
         fee : int }
 
-      public stateful entrypoint init(_payee : address, _arbiter : address, _fee : int) =
+      stateful entrypoint init(_payee : address, _arbiter : address, _fee : int) =
         { payer = Call.caller,
           // Chain.spend(Contract.balance,  'amount' ),
           payee = _payee,
           arbiter = _arbiter,
           fee = _fee }
 
-      public stateful entrypoint pay_out() =
+      stateful entrypoint pay_out() =
         if(Call.caller == state.arbiter)
             Chain.spend(state.arbiter, state.fee)
             Chain.spend(state.payee, Contract.balance)
 
-      public stateful entrypoint pay_back()  =
+      stateful entrypoint pay_back()  =
         if(Call.caller == state.arbiter)
             Chain.spend(state.arbiter, state.fee)
             Chain.spend(state.payer, Contract.balance)
             
-      public entrypoint balance() : int =
+      entrypoint balance() : int =
         Contract.balance
         
-      public entrypoint am_i_arbiter() : bool =
+      entrypoint am_i_arbiter() : bool =
         Call.caller == state.arbiter`;
   
-  let contractAddress = "ct_iWkCFRHAi7GbJeJqi9EZk7TPnmDKHQBtekKnGdC43hbcy7dh7";
+  let contractAddress = "ct_7GRs3rwG19CWDhcDbwPGKxiFsQzALBqDbSwoM4GWCo81EuJpa";
   
   async function callStatic(func, args) {
     //Create a new contract instance that we can interact with
     const contract = await aeternity.client.getContractInstance(contractSource, {contractAddress});
-    console.log(aeternity.client);
     
     //Make a call to get data of smart contract func, with specefied arguments
     const calledGet = await contract.call(func, args, {callStatic: true}).catch(e => console.error("Static call error: " + e));
     
     //Make another call to decode the data received in first call
     const decodedGet = await calledGet.decode().catch(e => console.error("Decoding error: " + e));
+    console.log("decodedGet: " + decodedGet);
 
     return decodedGet;
   }
@@ -132,7 +132,7 @@
       this.loading_text = "Getting arbiter status"
       result = await callStatic('am_i_arbiter', []);
       console.log("arbiter: ", result);
-      this.arbiter = result;
+      //this.arbiter = result;
 
       this.loading = false;
       this.loading_text = "Loading";
