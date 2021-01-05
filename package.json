@@ -11,7 +11,7 @@
   "dependencies": {
     "@aeternity/aepp-components": "git+https://github.com/kenodressel/aepp-components.git#develop",
     "@aeternity/aepp-sdk": "~4.7.0",
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "bignumber.js": "^9.0.0",
     "core-js": "^2.6.9",
     "vue": "^2.6.10",
